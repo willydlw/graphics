@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <cstdlib>
 
 #include <SFML/Graphics.hpp>
 
@@ -15,6 +16,12 @@ struct Point2d{
     Point2d(int xx, int yy) : x(xx), y(yy) {}
 };
 
+struct DemoConfig
+{
+    Point2d p1;
+    Point2d p2;
+    std::string title;
+};
 
 void swap(int* a, int* b)
 {
@@ -348,11 +355,39 @@ void printPoints(const std::vector<Point2d>& p)
     }
 }
 
-int main()
+struct DemoConfig initConfig(int argc, char** argv)
 {
+    struct DemoConfig config = {
+        .p1={0,0},
+        .p2={1,1},
+        .title="Default"};
+    
+    if(argc != 6){
+        return config;
+    }
+
+    config.p1.x = atoi(argv[1]);
+    config.p1.y = atoi(argv[2]);
+    config.p2.x = atoi(argv[3]);
+    config.p2.y = atoi(argv[4]);
+    config.title = argv[5];
+    return config;
+}
+
+int main( int argc, char** argv)
+{
+    struct DemoConfig demoConfig;
+
+    demoConfig = initConfig(argc, argv);
+    int x1 = demoConfig.p1.x;
+    int y1 = demoConfig.p1.y;
+    int x2 = demoConfig.p2.x;
+    int y2 = demoConfig.p2.y;
+
+
     std::vector<Point2d> pointsToPlot;
-    int x1 = 0, y1 = 0;
-    int x2 = 5, y2 = 5;
+    //int x1 = 0, y1 = 0;
+    //int x2 = 5, y2 = 5;
 
     int printCount = 1;
     std::string imageName = "practice.jpg";
@@ -370,7 +405,7 @@ int main()
     }
 
     #if 1
-    sf::RenderWindow window(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), "Line");
+    sf::RenderWindow window(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), demoConfig.title);
     window.setFramerateLimit(1);
 
     while(window.isOpen())
