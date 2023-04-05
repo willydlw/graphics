@@ -4,5 +4,5 @@ project(Graphics CXX)
 # Find SFML
 find_package(SFML 2 COMPONENTS audio graphics window system network)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} lines.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system)
