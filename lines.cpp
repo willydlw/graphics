@@ -450,8 +450,8 @@ int main( int argc, char** argv)
         #endif
 
         sf::Vertex line[] = { 
-            sf::Vertex(sf::Vector2f(x1 + TILE_SIZE/2, y1 + TILE_SIZE/2), sf::Color::Red),
-            sf::Vertex(sf::Vector2f((x2-x1)*TILE_SIZE - TILE_SIZE/2,(y2-y1)*TILE_SIZE - TILE_SIZE/2), sf::Color::Red)
+            sf::Vertex(sf::Vector2f(x1 * TILE_SIZE + TILE_SIZE/2, y1 * TILE_SIZE + TILE_SIZE/2), sf::Color::Red),
+            sf::Vertex(sf::Vector2f(x2 * TILE_SIZE + TILE_SIZE/2, y2 * TILE_SIZE + TILE_SIZE/2), sf::Color::Red)
         };
 
         window.draw(line, 2, sf::Lines);
