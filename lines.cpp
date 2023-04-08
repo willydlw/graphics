@@ -503,7 +503,7 @@ int main( int argc, char** argv)
         #endif
 
         #if 1
-        for(int i = 0; i < pointsToPlot.size(); i++)
+        for(unsigned int i = 0; i < pointsToPlot.size(); i++)
         {
             int x = pointsToPlot[i].x * TILE_SIZE;
             int y = pointsToPlot[i].y * TILE_SIZE;
