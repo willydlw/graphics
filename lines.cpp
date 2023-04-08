@@ -179,23 +179,10 @@ std::vector<Point2d> bresenham_line_vertical(Point2d p1, Point2d p2)
 {
     std::vector<Point2d> points;
 
-    std::cout << __FUNCTION__ << ", p1.x: " << p1.x << ", p1.y: " 
-        << p1.y << "\n";
-
-    std::cout << __FUNCTION__ << ", p2.x: " << p2.x << ", p2.y: " 
-        << p2.y << "\n";
-
     if(p1.y > p2.y)
     {
-        std::cout << __FUNCTION__ << " calling swap\n";
         swap(&p1.x, &p2.x);
         swap(&p1.y, &p2.y);
-
-        std::cout << "After swap, p1.x: " << p1.x << ", p1.y: " 
-        << p1.y << "\n";
-
-        std::cout << "p2.x: " << p2.x << ", p2.y: " 
-        << p2.y << "\n";
     }
 
     for(int y = p1.y; y <= p2.y; y++)
@@ -204,10 +191,6 @@ std::vector<Point2d> bresenham_line_vertical(Point2d p1, Point2d p2)
         points.push_back({p1.x,y});
     }
 
-    std::cout << __FUNCTION__ << ", points.size() is "
-        << points.size() << "\n";
-    
-    std::cout << __FUNCTION__ << ", Points List\n";
     printPoints(points);
     return points;
 }
@@ -217,23 +200,10 @@ std::vector<Point2d> bresenham_line_horizontal(Point2d p1, Point2d p2)
 {
     std::vector<Point2d> points;
 
-    std::cout << __FUNCTION__ << ", p1.x: " << p1.x << ", p1.y: " 
-        << p1.y << "\n";
-
-    std::cout << __FUNCTION__ << ", p2.x: " << p2.x << ", p2.y: " 
-        << p2.y << "\n";
-
     if(p1.x > p2.x)
     {
-        std::cout << __FUNCTION__ << " calling swap\n";
         swap(&p1.x, &p2.x);
         swap(&p1.y, &p2.y);
-
-        std::cout << "After swap, p1.x: " << p1.x << ", p1.y: " 
-        << p1.y << "\n";
-
-        std::cout << "p2.x: " << p2.x << ", p2.y: " 
-        << p2.y << "\n";
     }
 
     for(int x = p1.x; x <= p2.x; x++)
@@ -242,11 +212,6 @@ std::vector<Point2d> bresenham_line_horizontal(Point2d p1, Point2d p2)
         points.push_back({x,p1.y});
     }
 
-    std::cout << __FUNCTION__ << ", points.size() is "
-        << points.size() << "\n";
-    
-    std::cout << __FUNCTION__ << ", Points List\n";
-    printPoints(points);
     return points;
 }
 
@@ -471,18 +436,15 @@ std::vector<Point2d> getPoints(Point2d p1, Point2d p2)
 
     if(dx == 0)
     {
-        // vertical line 
         points = bresenham_line_vertical(p1, p2);
-        std::cout << __FUNCTION__ << ", points.size() is "
-            << points.size() << "\n";
     }
     else if(dy == 0)
     {
-        // horizontal line 
         points = bresenham_line_horizontal(p1, p2);
-        std::cout << __FUNCTION__ << ", points.size() is "
-            << points.size() << "\n";
     }
+
+    std::cout << __FUNCTION__ << ", points.size() is "
+            << points.size() << "\n";
 
     return points;
 }
