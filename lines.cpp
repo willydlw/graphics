@@ -4,6 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 
+
 const int WIN_HEIGHT = 480;
 const int WIN_WIDTH = 640;
 const int TILE_SIZE = 80;
@@ -21,7 +22,26 @@ struct DemoConfig
     Point2d p1;
     Point2d p2;
     std::string title;
+
+    // Constructors
+    DemoConfig(): p1({0,0}), p2({0,1}), title("Default")
+    {}
+
+    DemoConfig(int x1, int y1, int x2, int y2, std::string winTitle) :
+        p1({x1,y1}), p2({x2,y2}), title(winTitle)
+    {}
+
 };
+
+
+// Function prototypes
+void printPoints(const std::vector<Point2d>& p);
+std::vector<Point2d> getPoints(Point2d p1, Point2d p2);
+std::vector<Point2d> bresenham_line_vertical(Point2d p1, Point2d p2);
+void swap(int* a, int* b);
+
+
+// Function Definitions
 
 void swap(int* a, int* b)
 {
@@ -155,7 +175,42 @@ void swap(int* a, int* b)
 */
 
 
+std::vector<Point2d> bresenham_line_vertical(Point2d p1, Point2d p2)
+{
+    std::vector<Point2d> points;
 
+    std::cout << __FUNCTION__ << ", p1.x: " << p1.x << ", p1.y: " 
+        << p1.y << "\n";
+
+    std::cout << __FUNCTION__ << ", p2.x: " << p2.x << ", p2.y: " 
+        << p2.y << "\n";
+
+    if(p1.y > p2.y)
+    {
+        std::cout << __FUNCTION__ << " calling swap\n";
+        swap(&p1.x, &p2.x);
+        swap(&p1.y, &p2.y);
+
+        std::cout << "After swap, p1.x: " << p1.x << ", p1.y: " 
+        << p1.y << "\n";
+
+        std::cout << "p2.x: " << p2.x << ", p2.y: " 
+        << p2.y << "\n";
+    }
+
+    for(int y = p1.y; y <= p2.y; y++)
+    {
+        std::cout << "y: " << y << "\n";
+        points.push_back({p1.x,y});
+    }
+
+    std::cout << __FUNCTION__ << ", points.size() is "
+        << points.size() << "\n";
+    
+    std::cout << __FUNCTION__ << ", Points List\n";
+    printPoints(points);
+    return points;
+}
 
 
 
@@ -357,14 +412,7 @@ void printPoints(const std::vector<Point2d>& p)
 
 struct DemoConfig initConfig(int argc, char** argv)
 {
-    struct DemoConfig config = {
-        .p1={0,0},
-        .p2={1,1},
-        .title="Default"};
-    
-    if(argc != 6){
-        return config;
-    }
+    struct DemoConfig config;
 
     config.p1.x = atoi(argv[1]);
     config.p1.y = atoi(argv[2]);
@@ -374,35 +422,44 @@ struct DemoConfig initConfig(int argc, char** argv)
     return config;
 }
 
+std::vector<Point2d> getPoints(Point2d p1, Point2d p2)
+{
+    std::vector<Point2d> points;
+    int dx = p1.x - p2.x;
+    int dy = p1.y - p2.y;
+
+    std::cout << __FUNCTION__ << ", dx: " << dx << "\n";
+
+    if(dx == 0)
+    {
+        // vertical line 
+        points = bresenham_line_vertical(p1, p2);
+        std::cout << __FUNCTION__ << ", points.size() is "
+            << points.size() << "\n";
+    }
+
+    return points;
+}
+
 int main( int argc, char** argv)
 {
     struct DemoConfig demoConfig;
 
-    demoConfig = initConfig(argc, argv);
-    int x1 = demoConfig.p1.x;
-    int y1 = demoConfig.p1.y;
-    int x2 = demoConfig.p2.x;
-    int y2 = demoConfig.p2.y;
-
-
+    if(argc == 6)
+    {
+        demoConfig = initConfig(argc, argv);
+    }
+   
     std::vector<Point2d> pointsToPlot;
-    //int x1 = 0, y1 = 0;
-    //int x2 = 5, y2 = 5;
+    pointsToPlot = getPoints(demoConfig.p1, demoConfig.p2);
+
+    std::cout << "\npointsToPlot.size() is " << pointsToPlot.size() << "\n";
+    printPoints(pointsToPlot);
+ 
 
     int printCount = 1;
     std::string imageName = "practice.jpg";
 
-    pointsToPlot = bresenham_line_case1(x1, y1, x2, y2);
-    printPoints(pointsToPlot);
-
-    std::cout << "\nsize: " << pointsToPlot.size() << "\n";
-
-    for(int i = 0; i < pointsToPlot.size(); i++)
-    {
-        std::cout << "x:     " << pointsToPlot[i].x << ", y: " << pointsToPlot[i].y << "\n";
-        std::cout << "pixel: " << pointsToPlot[i].x * TILE_SIZE << ", " << pointsToPlot[i].y * TILE_SIZE << "\n";
-            
-    }
 
     #if 1
     sf::RenderWindow window(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), demoConfig.title);
@@ -450,8 +507,8 @@ int main( int argc, char** argv)
         #endif
 
         sf::Vertex line[] = { 
-            sf::Vertex(sf::Vector2f(x1 * TILE_SIZE + TILE_SIZE/2, y1 * TILE_SIZE + TILE_SIZE/2), sf::Color::Red),
-            sf::Vertex(sf::Vector2f(x2 * TILE_SIZE + TILE_SIZE/2, y2 * TILE_SIZE + TILE_SIZE/2), sf::Color::Red)
+            sf::Vertex(sf::Vector2f(demoConfig.p1.x * TILE_SIZE + TILE_SIZE/2, demoConfig.p1.y * TILE_SIZE + TILE_SIZE/2), sf::Color::Red),
+            sf::Vertex(sf::Vector2f(demoConfig.p2.x * TILE_SIZE + TILE_SIZE/2, demoConfig.p2.y * TILE_SIZE + TILE_SIZE/2), sf::Color::Red)
         };
 
         window.draw(line, 2, sf::Lines);
