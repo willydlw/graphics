@@ -16,8 +16,8 @@ void swap(int* a, int* b)
 std::vector<Point2d> getPoints(Point2d p1, Point2d p2)
 {
     std::vector<Point2d> points;
-    int dx = p1.x - p2.x;
-    int dy = p1.y - p2.y;
+    int dx = abs(p1.x - p2.x);
+    int dy = abs(p1.y - p2.y);
 
     std::cout << __FUNCTION__ << ", dx: " << dx << "\n";
 
@@ -28,6 +28,14 @@ std::vector<Point2d> getPoints(Point2d p1, Point2d p2)
     else if(dy == 0)
     {
         points = bresenham_line_horizontal(p1, p2);
+    }
+    else if(dx == dy)
+    {
+        points = bresenham_line_slope_one(p1, p2);
+    }
+    else if(dx > dy) 
+    {
+        points = bresenham_line_case1(p1, p2);
     }
 
     std::cout << __FUNCTION__ << ", points.size() is "
@@ -76,37 +84,60 @@ std::vector<Point2d> bresenham_line_horizontal(Point2d p1, Point2d p2)
     return points;
 }
 
+/* Slope equals one, i.e. dx = dy */
+std::vector<Point2d> bresenham_line_slope_one(Point2d p1, Point2d p2)
+{
+    std::vector<Point2d> points;
+    for(Point2d p(p1); p.x <= p2.x; p.x += 1, p.y += 1)
+    {
+        points.push_back(p);
+    }
 
-std::vector<Point2d> bresenham_line_case1(int x1, int y1, int x2, int y2)
+    return points;
+}
+
+/* Case 1 
+
+    Constraints
+        slope m:   0 < m <= 1
+        x1 < x2    if x1 < x2, point values p1 and p2 are swapped
+        y1 < y2 
+*/
+std::vector<Point2d> bresenham_line_case1(Point2d p1, Point2d p2)
 {
     std::vector<Point2d> points;
 
-    if(x1 > x2)
+    std::cout << __FUNCTION__ 
+        << ", p1.x: " << p1.x 
+        << ", p1.y: " << p1.y 
+        << ", p2.x: " << p2.x
+        << ", p2.y: " << p2.y << "\n";
+
+    if(p1.x > p2.x)
     {
-        swap(&x1, &x2);
-        swap(&y1, &y2);
+        swap(&p1.x, &p2.x);
+        swap(&p1.y, &p2.y);
     }
  
 
     // calculate constants
-    const int dx = x2 - x1;
-    const int dy = y2 - y1; 
+    const int dx = p2.x - p1.x;
+    const int dy = p2.y - p1.y; 
 
-    const int twody = 2 * dy;                        // 2 dy
+    const int twody = 2 * dy;                   // 2 dy
     const int twodydx = 2 * dy - 2 * dx;        // 2dy - 2dx
 
-    // plot the pixel at x1, y1
-    points.push_back(Point2d(x1,y1));
-
-
     // initial decision parameter: p(0) = 2 * dy - dx;
-    int pk = 2 * dy - dx;       
+    int pk = 2 * dy - dx;   
+
+    // add first integer point to list
+    points.push_back(p1);  
 
     // for each integer x-coordinate, xk, along the line
-    for(int x = x1 + 1, y = y1; x < x2; x++)
+    for(int x = p1.x + 1, y = p1.y; x <= p2.x - 1; x++)
     {
         if(pk <= 0)
-        {
+        {   // d1 < d2, so y(k) closer to y than y(k+1)
             // plot pixel at x(k) + 1, y(k)    
             Point2d p(x,y);
             points.push_back(p);
@@ -125,8 +156,8 @@ std::vector<Point2d> bresenham_line_case1(int x1, int y1, int x2, int y2)
         }
     }
 
-    // add final point (x2, y2) to list
-    points.push_back(Point2d(x2,y2));
+    // add final integer point coordinate to list
+    points.push_back(p2);
 
     return points;
 }
